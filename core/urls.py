@@ -1,6 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView
+)
 from rest_framework.routers import DefaultRouter
 from notifications.routing import websocket_urlpatterns
 
@@ -23,13 +27,17 @@ urlpatterns = [
     # Основные API endpoints
     path('api/', include(main_router.urls)),
 
-    # Документация API через drf-spectacular
+    # Документация API
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     # Уведомления
     path('notifications/', include('notifications.urls')),
 
-    # WebSocket маршруты
+    # WebSockets
     path('ws/', include(websocket_urlpatterns)),
+
+    # Для тестирования WebSocket (опционально)
+    path('test-notify/', include('notifications.urls')),
 ]
