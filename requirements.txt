@@ -6,3 +6,9 @@ channels==4.0.0
 channels-redis==4.1.0
 redis==4.6.0
 daphne==4.0.0
+Django>=5.2
+daphne
+channels
+channels_redis
+gunicorn
+whitenoise  # для статики
