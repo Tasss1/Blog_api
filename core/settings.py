@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'posts',
     'notifications',
     'products',
+    'drf_yasg',
+
 ]
 
 # Middleware
@@ -49,6 +51,8 @@ MIDDLEWARE = [
 
 # URLs
 ROOT_URLCONF = 'core.urls'
+
+
 
 # Templates
 TEMPLATES = [
@@ -117,13 +121,12 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Spectacular Settings
+
+
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Blog & Shop API',
-    'DESCRIPTION': 'API documentation for Blog and E-Shop',
+    'TITLE': 'Your API',
+    'DESCRIPTION': 'API description',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 # Logging (добавлено для отладки)

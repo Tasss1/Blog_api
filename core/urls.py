@@ -17,16 +17,19 @@ main_router.register('products', ProductViewSet, basename='products')
 main_router.register('profiles', UserProfileViewSet, basename='profiles')
 
 urlpatterns = [
+    # Админка
     path('admin/', admin.site.urls),
+
+    # Основные API endpoints
     path('api/', include(main_router.urls)),
 
-    # Swagger/OpenAPI
+    # Документация API через drf-spectacular
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
+    # Уведомления
     path('notifications/', include('notifications.urls')),
 
-
-    # WebSockets
+    # WebSocket маршруты
     path('ws/', include(websocket_urlpatterns)),
 ]
