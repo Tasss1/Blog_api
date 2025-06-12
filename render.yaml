@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: my-django-app
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: daphne -b 0.0.0.0 -p $PORT core.asgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings
+      - key: PORT
+        value: "8000"  # Можно оставить, но Render обычно задаёт сам порт
