@@ -1,0 +1,28 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Уведомления</title>
+</head>
+<body>
+    <h1>🔔 Уведомления</h1>
+    <div id="notifications"></div>
+<script src="{% static 'js/notifications.js' %}"></script>
+    <script>
+        const socket = new WebSocket('ws://localhost:8000/ws/notifications/');
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'notification') {
+                const div = document.getElementById('notifications');
+                div.innerHTML += `<p>🔔 ${data.message}</p>`;
+                console.log('Новое уведомление:', data.message);
+            }
+        };
+
+        socket.onopen = () => console.log('WebSocket подключен');
+        socket.onclose = () => console.log('WebSocket отключён');
+    </script>
+</body>
+</html>
