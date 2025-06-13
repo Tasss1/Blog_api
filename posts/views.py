@@ -3,7 +3,9 @@ from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema  # 👈 добавлено
 
+@extend_schema(tags=['Posts'])  # 👈 Название для Swagger
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.select_related('author').prefetch_related('comments', 'likes')
     serializer_class = PostSerializer
@@ -28,6 +30,8 @@ class PostViewSet(viewsets.ModelViewSet):
         post.likes.remove(request.user)
         return Response({'status': 'post unliked'})
 
+
+@extend_schema(tags=['Comments'])  # 👈 Название для Swagger
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]

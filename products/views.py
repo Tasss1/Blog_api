@@ -1,10 +1,11 @@
-# products/views.py
 from rest_framework import viewsets, permissions
 from .models import Product, UserProfile
 from .serializers import ProductSerializer, UserProfileSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema  # 👈 добавлено
 
+@extend_schema(tags=['Products'])  # 👈 Название для Swagger
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -19,6 +20,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         product.buyers.add(request.user)
         return Response({'status': 'product bought'})
 
+
+@extend_schema(tags=['Profiles'])  # 👈 Название для Swagger
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
