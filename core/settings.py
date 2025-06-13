@@ -11,16 +11,17 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--f+f6!i1j2%y6@z1tlui$ljv-p*))4780u(iz*7_+)-*&m89-w'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure--f+f6!i1j2%y6@z1tlui$ljv-p*))4780u(iz*7_+)-*&m89-w')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']  # Разрешаем все хосты для разработки
+# Разрешаем хосты — для продакшена лучше конкретизировать
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 INSTALLED_APPS = [
-    'daphne',  # Daphne должен быть в начале (ASGI сервер для Channels)
+    'daphne',  # ASGI сервер для Channels, должен быть первым
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -70,16 +71,16 @@ TEMPLATES = [
     },
 ]
 
-# WSGI application (для обычного Django)
+# WSGI application (для локальной разработки)
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# ASGI application (для Channels)
+# ASGI application (для Channels и продакшена)
 ASGI_APPLICATION = 'core.asgi.application'
 
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',  # можно заменить на Postgres для продакшена
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -98,9 +99,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Для production сборки
+# Static files
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Для продакшена
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Для разработки
 
 # Default primary key field type
@@ -126,26 +127,22 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-            "symmetric_encryption_keys": [SECRET_KEY],  # Для шифрования сообщений (рекомендуется)
+            "hosts": [ (os.getenv('REDIS_HOST', '127.0.0.1'), int(os.getenv('REDIS_PORT', 6379))) ],
+            "symmetric_encryption_keys": [SECRET_KEY],
         },
     },
 }
 
-# Logging для отладки
+# Logging for debugging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
     'root': {
         'handlers': ['console'],
         'level': 'DEBUG' if DEBUG else 'INFO',
     },
 }
 
-# Дополнительные настройки (например, URL для WebSocket)
+# Дополнительные настройки
 NOTIFICATIONS_WEBSOCKET_URL = 'ws/notifications/'
